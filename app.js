@@ -1,64 +1,80 @@
 function getComputerChoice() {
     let randomNumber = Math.random();
     if (randomNumber < 1/3) {
-        return 'rock';
+        return 'Rock';
     } else if (randomNumber > 2/3) {
-        return 'paper';
+        return 'Paper';
     } else {
-        return "scissors";
+        return "Scissors";
     }
 }
 
 function playRound(playerSelection, computerSelection) {
-    let playerSelectionLower = playerSelection.toLowerCase();
-    if (playerSelectionLower === computerSelection) {
+    if (playerSelection === computerSelection) {
         return 0;
-    } else if (playerSelectionLower == 'rock' && computerSelection == 'paper') {
+    } else if (playerSelection == 'Rock' && computerSelection == 'Paper') {
         return -1
-    } else if (playerSelectionLower == 'rock' && computerSelection == 'scissors') {
+    } else if (playerSelection == 'Rock' && computerSelection == 'Scissors') {
         return 1;
-    } else if (playerSelectionLower == 'paper' && computerSelection == 'rock') {
+    } else if (playerSelection == 'Paper' && computerSelection == 'Rock') {
         return 1;
-    } else if (playerSelectionLower == 'paper' && computerSelection == 'scissors') {
+    } else if (playerSelection == 'Paper' && computerSelection == 'Scissors') {
         return -1;
-    } else if (playerSelectionLower == 'scissors' && computerSelection == 'rock') {
+    } else if (playerSelection == 'Scissors' && computerSelection == 'Rock') {
         return -1;
-    }  else if (playerSelectionLower == 'scissors' && computerSelection == 'paper') {
+    }  else if (playerSelection == 'Scissors' && computerSelection == 'Paper') {
         return 1;
     }
   }
 
+let totalGamePlayed = 0;
 
-  function game() {
-    let computerWin = 0, playerWin = 0;
-    for (let i = 0; i < 5; i++) {
-        const playerSelection = prompt("Choose Rock, Paper of Scissors");
-        const playerSelectionNew = playerSelection.split(' ')
-        .map(w => w[0].toUpperCase() + w.substring(1).toLowerCase())
-        .join(' ');
-        const computerSelection = getComputerChoice();
-        const computerSelectionNew = computerSelection.split(' ')
-        .map(w => w[0].toUpperCase() + w.substring(1).toLowerCase())
-        .join(' ');
+document.addEventListener("DOMContentLoaded", () => {
+
+    function roundInteraction(playerSelection) {
+        computerSelection = getComputerChoice();
         result = playRound(playerSelection, computerSelection);
+        totalGamePlayed++;
         if (result === 0) {
-            console.log("It's a draw");
-        } else if (result === -1) {
-            computerWin++;
-            console.log(`You lost. ${computerSelectionNew} beats ${playerSelectionNew}`);
+            resultText.innerText = "It's a tie";
+        } else if (result === 1) {
+            resultText.innerHTML = "You won. <br>" + playerSelection + " beats " + computerSelection;
+            playerCounter.innerText = Number(playerCounter.textContent) + 1;
         } else {
-            playerWin++;
-            console.log(`You won. ${playerSelectionNew} beats ${computerSelectionNew}`);
+            resultText.innerHTML = "You lost. <br>" + computerSelection + " beats " + playerSelection;
+            computerCounter.innerText = Number(computerCounter.textContent) + 1;
         }
-    }
+        if (totalGamePlayed == 5) {
+            if (Number(playerCounter.textContent) > Number(computerCounter.textContent)) {
+                resultText.innerHTML = resultText.innerHTML + '<br>' + "You won the match. Congratulations!";
+            } else {
+                resultText.innerHTML = resultText.innerHTML + '<br>' + "You lost the match. Better luck next time.";
+            }
+            playerCounter.innerText = 0;
+            computerCounter.innerText = 0;
+            totalGamePlayed = 0;
+        }    
+      }
 
-    if (playerWin === computerWin) {
-        console.log('Game finished as draw');
-    } else if (playerWin > computerWin) {
-        console.log('You won the game. Confratulation!');
-    } else {
-        console.log('You lost');
-    }
-  }
-   
-  game();
+    playerCounter = document.getElementById("player_counter__label");
+    computerCounter = document.getElementById("computer_counter__label");    
+    rockBtn = document.getElementById("rock__btn");
+    paperBtn = document.getElementById("paper__btn");
+    scissorsBtn = document.getElementById("scissors__btn");
+    resultText = document.getElementById("result__textarea");
+    restartBtn = document.getElementById("restart__btn");
+
+    rockBtn.addEventListener('click', function() {roundInteraction("Rock")});
+    paperBtn.addEventListener('click', function() {roundInteraction("Paper")});
+    scissorsBtn.addEventListener('click', function() {roundInteraction("Rock")});
+
+    restartBtn.addEventListener('click', () => {
+        playerCounter.innerText = 0;
+        computerCounter.innerHTML = 0;
+        totalGamePlayed = 0;
+        resultText.innerHTML = '';
+    })
+    playerCounter.innerText = 0;
+    computerCounter.innerHTML = 0;
+    resultText.innerHTML = '';
+  });
